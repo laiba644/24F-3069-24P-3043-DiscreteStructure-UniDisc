@@ -126,7 +126,11 @@
     <ClInclude Include="CourseScheduling.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Courses.txt" />
     <ClCompile Include="CourseScheduling.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="prerequisites.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,5 +23,11 @@
     <ClCompile Include="CourseScheduling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Courses.txt">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="prerequisites.txt" />
   </ItemGroup>
 </Project>
