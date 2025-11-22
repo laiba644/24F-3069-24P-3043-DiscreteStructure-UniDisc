@@ -1,12 +1,13 @@
-﻿#include "CourseScheduling.h"
+#include "CourseScheduling.h"
 #include"UniversityDatabase.h"
 #include <fstream>
 #include <sstream>
 using namespace std;
-string toUpperCase(string s) {
-    for (int i = 0; i < s.length(); i++)
-        if (s[i] >= 'a' && s[i] <= 'z')
-            s[i] -= 32;
+string up(string s) {
+    for (char& c : s) {
+        if (c >= 'a' && c <= 'z')
+            c -= 32;
+    }
     return s;
 }
 
@@ -115,18 +116,22 @@ void CourseScheduling::loadCoursesFromFile(const string& filename) {
     }
     string line;
     while (getline(file, line)) {
-        if (line.empty()) 
-            continue;
+        if (line == "") continue;
+
         string code, name, cred, type, sem;
         stringstream ss(line);
+
         getline(ss, code, ',');
         getline(ss, name, ',');
         getline(ss, cred, ',');
         getline(ss, type, ',');
         getline(ss, sem, ',');
-        code = toUpperCase(code);
-        addCourse(code, name, stoi(cred), type, stoi(sem));
+        int c = (cred != "") ? cred[0] - '0' : 0;
+        int s = (sem != "") ? sem[0] - '0' : 0;
+        addCourse(up(code), name, c, type, s);
+
     }
+
     file.close();
     cout << "Courses loaded.\n";
 }
@@ -138,21 +143,28 @@ void CourseScheduling::loadPrerequisitesFromFile(const string& filename) {
     }
     string line;
     while (getline(file, line)) {
-        if (line.empty()) 
-            continue;
+        if (line == "") continue; 
+
         string course, prereq;
         stringstream ss(line);
+
         getline(ss, course, ',');
         getline(ss, prereq, ',');
-        course = toUpperCase(course);
-        prereq = toUpperCase(prereq);
+
+        course = up(course);
+        prereq = up(prereq);
+
+        if (course == "" || prereq == "") continue;
+
         int i = getCourseIndex(course);
         int j = getCourseIndex(prereq);
+
         if (i != -1 && j != -1) {
             courses[i]->addPrerequisite(prereq);
             prerequisiteMatrix[i][j] = 1;
         }
     }
+
     file.close();
     cout << "Prerequisites loaded.\n";
 }
@@ -167,14 +179,14 @@ void CourseScheduling::displayCourses() {
 }
 bool CourseScheduling::canTakeCourse(const string& code, string* completed, int completedCount) {
     Course* c = findCourse(code);
-    if (!c) 
+    if (!c)
         return false;
     for (int i = 0; i < c->prereqCount; i++) {
         bool done = false;
         for (int j = 0; j < completedCount; j++)
             if (completed[j] == c->prerequisites[i])
                 done = true;
-        if (!done) 
+        if (!done)
             return false;
     }
     return true;
@@ -223,7 +235,7 @@ void CourseScheduling::generateSubsetSequences(string subset[], int count) {
     bool* used = new bool[count];
     for (int i = 0; i < count; i++) {
         selected[i] = subset[i];
-        selected[i] = toUpperCase(subset[i]);
+        selected[i] = up(subset[i]);
         used[i] = false;
         if (findCourse(selected[i]) == nullptr) {
             cout << " Error Course " << selected[i] << " does not exist.\n";
@@ -312,8 +324,8 @@ bool CourseScheduling::hasIndirectPrerequisite(const string& course, const strin
 }
 void CourseScheduling::importCoursesFromDB(UniversityDatabase& db) {
     for (int i = 0; i < db.courseCount; i++) {
-       
-        string code = toUpperCase(db.courseCodes[i]);
+
+        string code = up(db.courseCodes[i]);
 
         // Add course from DB
         addCourse(
@@ -327,7 +339,7 @@ void CourseScheduling::importCoursesFromDB(UniversityDatabase& db) {
         // Add prerequisites
         int cIndex = getCourseIndex(code);
         for (int j = 0; j < db.prereqCount[i]; j++) {
-            string pre = toUpperCase(db.coursePrerequisites[i][j]);
+            string pre = up(db.coursePrerequisites[i][j]);
             courses[cIndex]->addPrerequisite(pre);
 
             int preIndex = getCourseIndex(pre);

@@ -4,14 +4,14 @@
 #include <iostream>
 #include <string>
 using namespace std;
-string toUpperCase(string s);
+string up(string s);
 class CourseScheduling {
 public:
     class Course {
     public:
         string courseCode;
         string courseName;
-        
+
         int credits;
         string type;
         int semester;
@@ -23,7 +23,7 @@ public:
         ~Course();
         void addPrerequisite(const string& prereq);
         void print() const;
-    }; 
+    };
     Course** courses;
     int** prerequisiteMatrix;
     int courseCount;
@@ -46,6 +46,6 @@ public:
     bool hasIndirectPrerequisite(const string& course, const string& prereq);
     void showPrerequisites(const string& code);
     void importCoursesFromDB(UniversityDatabase& db);
-   
+
 };
 #endif
