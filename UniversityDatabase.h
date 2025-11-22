@@ -5,14 +5,14 @@ using namespace std;
 
 class UniversityDatabase {
 public:
-    // ---------------- STUDENT DATA ----------------
+    //  STUDENT DATA
     string* students;
     int studentCount;
     int studentCap;
     string** studentCourses; // each student can take multiple courses
     int* courseCountOfStudent;
 
-    // ---------------- COURSE DATA ----------------
+    // COURSE DATA
     string* courseCodes;
     string* courseNames;
     int* courseCredits;
@@ -24,7 +24,7 @@ public:
     string** coursePrerequisites;
     int* prereqCount;
 
-    // ---------------- FACULTY & ROOM DATA ----------------
+    // FACULTY & ROOM DATA 
     string* faculty;
     string* rooms;
     int facultyCount, facultyCap;
