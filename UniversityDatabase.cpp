@@ -22,7 +22,7 @@ UniversityDatabase::UniversityDatabase() {
     studentCourses = new string * [studentCap];
     courseCountOfStudent = new int[studentCap];
     for (int i = 0; i < studentCap; i++) {
-        studentCourses[i] = new string[10]; // max 6 courses realistically
+        studentCourses[i] = new string[10]; 
         courseCountOfStudent[i] = 0;
     }
 
@@ -38,7 +38,7 @@ UniversityDatabase::UniversityDatabase() {
     coursePrerequisites = new string * [courseCap];
     for (int i = 0; i < courseCap; i++) {
         prereqCount[i] = 0;
-        coursePrerequisites[i] = new string[15]; // up to 19 allowed, but 15 safe
+        coursePrerequisites[i] = new string[15]; 
     }
 
     // FACULTY & ROOMS
@@ -71,7 +71,7 @@ UniversityDatabase::~UniversityDatabase() {
     delete[] coursePrerequisites;
 }
 
-// ---------------- STUDENTS ----------------
+//  STUDENTS
 void UniversityDatabase::addStudent(string name) {
     if (studentCount >= studentCap) return;
     students[studentCount++] = name;
@@ -83,7 +83,7 @@ int UniversityDatabase::getStudentIndex(string name) {
     return -1;
 }
 
-// ---------------- COURSES ----------------
+//  COURSES 
 void UniversityDatabase::addCourse(string code, string name, int credit, int sem) {
     code = toUpper(code);
     courseCodes[courseCount] = code;
@@ -108,16 +108,17 @@ void UniversityDatabase::addCoursePrerequisite(string course, string prereq) {
     coursePrerequisites[i][prereqCount[i]++] = prereq;
 }
 
-// ---------------- REGISTRATION ----------------
+//  REGISTRATION 
 void UniversityDatabase::registerStudentCourse(string student, string course) {
     course = toUpper(course);
     int s = getStudentIndex(student);
     int c = getCourseIndex(course);
-    if (s == -1 || c == -1) return;
+    if (s == -1 || c == -1)
+	 return;
     studentCourses[s][courseCountOfStudent[s]++] = course;
 }
 
-// ---------------- LOADING FILES ----------------
+// - LOADING FILES 
 void UniversityDatabase::loadCoursesFromFile(string f1, string f2) {
     // Load course main data
     ifstream file(f1);
@@ -146,10 +147,9 @@ void UniversityDatabase::loadCoursesFromFile(string f1, string f2) {
     }
     file2.close();
 }
-// ====================== FACULTY / LAB QUERIES =======================
+//  FACULTY / LAB QUERIES
 
-// Placeholder: faculty-course mapping will be provided by FunctionsModule or LogicEngine.
-// DB does not decide the assignment. So we return "" (unknown) if no module sets it.
+
 string UniversityDatabase::getFacultyOfCourse(const string& courseCode) const {
     // we only normalize and validate
     string code = toUpper(courseCode);
