@@ -23,7 +23,7 @@ public:
         ~Course();
         void addPrerequisite(const string& prereq);
         void print() const;
-    };
+    };//implementation
     Course** courses;
     int** prerequisiteMatrix;
     int courseCount;
