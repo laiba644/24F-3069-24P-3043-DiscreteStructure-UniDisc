@@ -119,7 +119,7 @@ void UniversityDatabase::clearDatabase() {
         prereqCount[i] = 0;
     }
 
-    studentCount = 0;
+  //  studentCount = 0;
     courseCount = 0;
 }
 
