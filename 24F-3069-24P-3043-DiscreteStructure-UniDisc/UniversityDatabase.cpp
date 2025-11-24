@@ -40,6 +40,17 @@ UniversityDatabase::UniversityDatabase() {
     roomCount = 0;
     roomCap = 50;
     rooms = new string[roomCap];
+    // Faculty–Course Mapping
+    facultyCourseCount = 0;
+    facultyCourseCap = 200;
+    facultyAssigned = new string[facultyCourseCap];
+    courseAssigned = new string[facultyCourseCap];
+
+    // Course–Lab Mapping
+    labCourseCount = 0;
+    labCourseCap = 200;
+    labCourse = new string[labCourseCap];
+    labAssigned = new string[labCourseCap];
 }
 
 UniversityDatabase::~UniversityDatabase() {
@@ -70,12 +81,16 @@ void UniversityDatabase::addStudent(string name) {
 
 int UniversityDatabase::getStudentIndex(string name) {
     for (int i = 0; i < studentCount; i++)
-        if (students[i] == name) return i;
+        if (students[i] == name) 
+            return i;
     return -1;
 }
 
 //  COURSES 
 void UniversityDatabase::addCourse(string code, string name, int credit, int sem) {
+    //check
+    if (courseCount >= courseCap)
+        return;
     code = toUpper(code);
     courseCodes[courseCount] = code;
     courseNames[courseCount] = name;
@@ -107,6 +122,8 @@ void UniversityDatabase::registerStudentCourse(string student, string course) {
     int c = getCourseIndex(course);
     if (s == -1 || c == -1)
         return;
+    if (courseCountOfStudent[s] >= 7)
+        return;
     studentCourses[s][courseCountOfStudent[s]++] = course;
 }
 void UniversityDatabase::clearDatabase() {
@@ -119,11 +136,11 @@ void UniversityDatabase::clearDatabase() {
         prereqCount[i] = 0;
     }
 
-  //  studentCount = 0;
+    studentCount = 0;
     courseCount = 0;
 }
 
-// -LOADING FILES 
+// - LOADING FILES 
 void UniversityDatabase::loadCoursesFromFile(string f1, string f2) {
     clearDatabase();
 
@@ -150,38 +167,68 @@ void UniversityDatabase::loadCoursesFromFile(string f1, string f2) {
     }
     file.close();
 }
+
+
+
+
+
+
 //  FACULTY / LAB QUERIES
 
+
 string UniversityDatabase::getFacultyOfCourse(const string& courseCode) const {
-    // we only normalize and validate
     string code = toUpper(courseCode);
-    int idx = -1;
-    for (int i = 0; i < courseCount; i++) {
-        if (courseCodes[i] == code) {
-            idx = i;
-            break;
-        }
+    for (int i = 0; i < facultyCourseCount; i++) {
+        if (courseAssigned[i] == code)
+            return facultyAssigned[i];  // Return mapped faculty
     }
-    // If course exists but DB does not maintain faculty mapping,
-    // we return empty string. Other modules will interpret it.
-    if (idx == -1)
-        return "";
+    return "";  // No match found
+}
+
+
+
+
+void UniversityDatabase::assignFacultyToCourse(const string& facultyID, const string& courseCode) {
+    string code = toUpper(courseCode);
+
+    int cIndex = getCourseIndex(code);
+    if (cIndex == -1) {
+        cout << "Course not found!\n";
+        return;
+    }
+
+    if (facultyCourseCount >= facultyCourseCap) {
+        cout << "Faculty–course capacity exceeded!\n";
+        return;
+    }
+
+    // store mapping in parallel arrays
+    facultyAssigned[facultyCourseCount] = facultyID;
+    courseAssigned[facultyCourseCount] = code;
+    facultyCourseCount++;
+
+    cout << "Faculty " << facultyID << " assigned to " << code << " successfully!\n";
+}
+string UniversityDatabase::getLabOfCourse(const string& courseCode) const {
+    string code = toUpper(courseCode);
+
+    for (int i = 0; i < labCourseCount; i++) {
+        if (labCourse[i] == code)
+            return labAssigned[i];
+    }
     return "";
 }
 
-// Placeholder: lab-course mapping not stored in DB, used only via LogicEngine.
-string UniversityDatabase::getLabOfCourse(const string& courseCode) const {
+void UniversityDatabase::assignLabToCourse(const string& labID, const string& courseCode) {
     string code = toUpper(courseCode);
-    int idx = -1;
-    for (int i = 0; i < courseCount; i++) {
-        if (courseCodes[i] == code) {
-            idx = i;
-            break;
-        }
-    }
-    if (idx == -1)
-        return "";
-    return "";
+
+    if (labCourseCount >= labCourseCap) return;
+
+    labCourse[labCourseCount] = code;
+    labAssigned[labCourseCount] = labID;
+    labCourseCount++;
+
+    cout << "Lab " << labID << " assigned to " << code << " successfully!\n";
 }
 
 

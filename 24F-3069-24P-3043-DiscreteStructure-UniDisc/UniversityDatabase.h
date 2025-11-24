@@ -11,6 +11,17 @@ public:
     int studentCap;
     string** studentCourses; // each student can take multiple courses
     int* courseCountOfStudent;
+    // FACULTY–COURSE ASSIGNMENT
+    string* facultyAssigned;   // faculty ID
+    string* courseAssigned;    // course Code
+    int facultyCourseCount;
+    int facultyCourseCap;
+
+    // COURSE–LAB ASSIGNMENT
+    string* labAssigned;
+    string* labCourse;
+    int labCourseCount;
+    int labCourseCap;
 
     // COURSE DATA
     string* courseCodes;
@@ -52,6 +63,10 @@ public:
     string getFacultyOfCourse(const string& courseCode) const;
     string getLabOfCourse(const string& courseCode) const;
     void clearDatabase();
+    void assignFacultyToCourse(const string& facultyID, const string& courseCode);
+    void assignLabToCourse(const string& labID, const string& courseCode);
+
+
 };
 
 #endif
