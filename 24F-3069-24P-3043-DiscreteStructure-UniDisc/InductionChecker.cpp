@@ -40,10 +40,20 @@ void InductionChecker::getFullChain(const string& course,
     delete[] visited;
 }
 
-bool InductionChecker::verifyEligibility(const string& targetCourse,
-    string completed[], int completedCount) {
+bool InductionChecker::verifyEligibility(const string& targetCourse,string completed[], int completedCount) {
     string target = up(targetCourse);
+    //added if 0 prerequisities and then it will alwasy be eligible
+    if (completedCount == 0) {
+        // Check if course even has prerequisites
+        string chain[200];
+        int chainCount = 0;
+        getFullChain(target, chain, chainCount);
 
+        if (chainCount == 0)
+            return true;   // No prerequisites -> Eligible
+        else
+            return false;  // Has prerequisites -> Not eligible
+    }
     // Convert completed to uppercase
     for (int i = 0; i < completedCount; i++)
         completed[i] = up(completed[i]);
@@ -57,9 +67,11 @@ bool InductionChecker::verifyEligibility(const string& targetCourse,
     for (int i = 0; i < chainCount; i++) {
         bool ok = false;
         for (int j = 0; j < completedCount; j++) {
-            if (chain[i] == completed[j]) ok = true;
+            if (chain[i] == completed[j]) 
+                ok = true;
         }
-        if (!ok) return false;
+        if (!ok)
+            return false;
     }
     return true;
 }
