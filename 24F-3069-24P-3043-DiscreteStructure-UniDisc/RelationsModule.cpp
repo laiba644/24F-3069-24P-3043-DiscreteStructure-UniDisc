@@ -1,10 +1,12 @@
-ï»¿#include "RelationsModule.h"
+#include "RelationsModule.h"
 #include "UniversityDatabase.h"
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 RelationsModule::RelationsModule(UniversityDatabase* dbPtr) {
     db = dbPtr;
+
     initMatrices();
 }
 
@@ -102,32 +104,284 @@ bool RelationsModule::isCourseConflict(const string& c1, const string& c2) const
     if (i == -1 || j == -1) return false;
     return courseConflict[i][j] == 1;
 }
+// ============ DISPLAY RELATIONS ============
 
-// ============= DISPLAY RELATIONS ==============
 void RelationsModule::showStudentCourseRelation() {
     if (!db) return;
-    cout << "\n STUDENT â†’ COURSE RELATION \n    ";
-    for (int j = 0;j < db->courseCount;j++) cout << db->courseCodes[j] << " ";
+
+    cout << "\nSTUDENT ? COURSE RELATION\n";
+
+    if (db->studentCount == 0 || db->courseCount == 0) {
+        cout << "(No students or courses in the system.)\n";
+        return;
+    }
+
+    // STEP 1: Detect active columns manually 
+    int activeCols[200];      // max 200 course columns
+    int activeCount = 0;
+
+    for (int j = 0; j < db->courseCount; j++) {
+
+        bool used = false;
+        for (int i = 0; i < db->studentCount; i++) {
+            if (studentCourse[i][j] != 0) {
+                used = true;
+                break;
+            }
+        }
+
+        if (used) {
+            activeCols[activeCount++] = j;
+        }
+    }
+
+    if (activeCount == 0) {
+        cout << "(No student–course pairs added yet.)\n";
+        return;
+    }
+
+    const int NAME_WIDTH = 12;
+    const int COL_WIDTH = 7;
+
+    // ---- STEP 2: Print course header ----
+    cout << "\n" << setw(NAME_WIDTH) << " ";
+    for (int k = 0; k < activeCount; k++) {
+        int colIndex = activeCols[k];
+        cout << setw(COL_WIDTH) << db->courseCodes[colIndex];
+    }
     cout << "\n";
 
-    for (int i = 0;i < db->studentCount;i++) {
-        cout << db->students[i] << " : ";
-        for (int j = 0;j < db->courseCount;j++)
-            cout << studentCourse[i][j] << " ";
+    // ---- STEP 3: Print student rows ----
+    for (int i = 0; i < db->studentCount; i++) {
+
+        cout << setw(NAME_WIDTH) << db->students[i];
+
+        bool hasAny = false;
+        for (int k = 0; k < activeCount; k++) {
+            int colIndex = activeCols[k];
+            if (studentCourse[i][colIndex] != 0) {
+                hasAny = true;
+                break;
+            }
+        }
+
+        if (!hasAny) {
+            cout << "   (no courses)\n";
+            continue;
+        }
+
+        for (int k = 0; k < activeCount; k++) {
+            int colIndex = activeCols[k];
+            cout << setw(COL_WIDTH) << studentCourse[i][colIndex];
+        }
+        cout << "\n";
+    }
+}
+void RelationsModule::showFacultyCourseRelation() {
+    if (!db) return;
+
+    cout << "\nFACULTY ? COURSE RELATION\n";
+
+    if (db->facultyCount == 0 || db->courseCount == 0) {
+        cout << "(No faculty or courses in the system.)\n";
+        return;
+    }
+
+    int activeCols[200];
+    int activeCount = 0;
+
+    // find courses that are actually used in facultyCourse
+    for (int j = 0; j < db->courseCount; j++) {
+        bool used = false;
+        for (int i = 0; i < db->facultyCount; i++) {
+            if (facultyCourse[i][j] != 0) {
+                used = true;
+                break;
+            }
+        }
+        if (used) activeCols[activeCount++] = j;
+    }
+
+    if (activeCount == 0) {
+        cout << "(No faculty–course pairs added yet.)\n";
+        return;
+    }
+
+    const int NAME_WIDTH = 12;
+    const int COL_WIDTH = 7;
+
+    cout << "\n" << setw(NAME_WIDTH) << " ";
+    for (int k = 0; k < activeCount; k++) {
+        int colIndex = activeCols[k];
+        cout << setw(COL_WIDTH) << db->courseCodes[colIndex];
+    }
+    cout << "\n";
+
+    for (int i = 0; i < db->facultyCount; i++) {
+
+        cout << setw(NAME_WIDTH) << db->faculty[i];
+
+        bool hasAny = false;
+        for (int k = 0; k < activeCount; k++) {
+            int colIndex = activeCols[k];
+            if (facultyCourse[i][colIndex] != 0) {
+                hasAny = true;
+                break;
+            }
+        }
+
+        if (!hasAny) {
+            cout << "   (no courses)\n";
+            continue;
+        }
+
+        for (int k = 0; k < activeCount; k++) {
+            int colIndex = activeCols[k];
+            cout << setw(COL_WIDTH) << facultyCourse[i][colIndex];
+        }
+        cout << "\n";
+    }
+}
+void RelationsModule::showCourseRoomRelation() {
+    if (!db) return;
+
+    cout << "\nCOURSE ? ROOM RELATION\n";
+
+    if (db->courseCount == 0 || db->roomCount == 0) {
+        cout << "(No courses or rooms in the system.)\n";
+        return;
+    }
+
+    // Detect active rooms (columns that contain at least one room assignment)
+    int activeRooms[200];
+    int activeRoomCount = 0;
+
+    for (int j = 0; j < db->roomCount; j++) {
+        bool used = false;
+        for (int i = 0; i < db->courseCount; i++) {
+            if (courseRoom[i][j] != 0) {
+                used = true;
+                break;
+            }
+        }
+        if (used) {
+            activeRooms[activeRoomCount++] = j;
+        }
+    }
+
+    if (activeRoomCount == 0) {
+        cout << "(No course–room assignments added yet.)\n";
+        return;
+    }
+
+    const int NAME_WIDTH = 10;
+    const int COL_WIDTH = 10;
+
+    // Header
+    cout << "\n" << setw(NAME_WIDTH) << " ";
+    for (int k = 0; k < activeRoomCount; k++) {
+        int idx = activeRooms[k];
+        cout << setw(COL_WIDTH) << db->rooms[idx];
+    }
+    cout << "\n";
+
+    // Rows
+    for (int i = 0; i < db->courseCount; i++) {
+
+        // check if course has ANY room
+        bool hasAny = false;
+        for (int k = 0; k < activeRoomCount; k++) {
+            int idx = activeRooms[k];
+            if (courseRoom[i][idx] != 0) {
+                hasAny = true;
+                break;
+            }
+        }
+
+        cout << setw(NAME_WIDTH) << db->courseCodes[i];
+
+        if (!hasAny) {
+            cout << "   (no room)\n";
+            continue;
+        }
+
+        for (int k = 0; k < activeRoomCount; k++) {
+            int idx = activeRooms[k];
+            cout << setw(COL_WIDTH) << courseRoom[i][idx];
+        }
+
         cout << "\n";
     }
 }
 
+
 void RelationsModule::showCourseConflictRelation() {
     if (!db) return;
-    cout << "\n COURSE CONFLICT GRAPH \n    ";
-    for (int j = 0;j < db->courseCount;j++) cout << db->courseCodes[j] << " ";
+
+    cout << "\nCOURSE CONFLICT GRAPH\n";
+
+    if (db->courseCount == 0) {
+        cout << "(No courses in the system.)\n";
+        return;
+    }
+
+    // detect active conflict columns (only courses with at least one conflict)
+    int activeCols[200];
+    int activeCount = 0;
+
+    for (int j = 0; j < db->courseCount; j++) {
+        bool used = false;
+        for (int i = 0; i < db->courseCount; i++) {
+            if (courseConflict[i][j] != 0) {
+                used = true;
+                break;
+            }
+        }
+        if (used) {
+            activeCols[activeCount++] = j;
+        }
+    }
+
+    if (activeCount == 0) {
+        cout << "(No conflict pairs added yet.)\n";
+        return;
+    }
+
+    const int NAME_WIDTH = 10;
+    const int COL_WIDTH = 7;
+
+    // header
+    cout << "\n" << setw(NAME_WIDTH) << " ";
+    for (int k = 0; k < activeCount; k++) {
+        int idx = activeCols[k];
+        cout << setw(COL_WIDTH) << db->courseCodes[idx];
+    }
     cout << "\n";
 
-    for (int i = 0;i < db->courseCount;i++) {
-        cout << db->courseCodes[i] << " : ";
-        for (int j = 0;j < db->courseCount;j++)
-            cout << courseConflict[i][j] << " ";
+    // row-wise printing
+    for (int i = 0; i < db->courseCount; i++) {
+
+        bool hasAnyConflict = false;
+        for (int k = 0; k < activeCount; k++) {
+            int idx = activeCols[k];
+            if (courseConflict[i][idx] != 0) {
+                hasAnyConflict = true;
+                break;
+            }
+        }
+
+        cout << setw(NAME_WIDTH) << db->courseCodes[i];
+
+        if (!hasAnyConflict) {
+            cout << "   (no conflict)\n";
+            continue;
+        }
+
+        for (int k = 0; k < activeCount; k++) {
+            int idx = activeCols[k];
+            cout << setw(COL_WIDTH) << courseConflict[i][idx];
+        }
+
         cout << "\n";
     }
 }
@@ -190,7 +444,7 @@ void RelationsModule::detectIndirectStudentConflicts() {
             if (studentCourse[s][c1] == 1) {
                 for (int c2 = 0;c2 < db->courseCount;c2++) {
                     if (studentCourse[s][c2] == 1 && courseConflict[c1][c2] == 1) {
-                        cout << "âš  Student " << db->students[s]
+                        cout << "error Student " << db->students[s]
                             << " has conflicting courses: "
                             << db->courseCodes[c1] << " and "
                             << db->courseCodes[c2] << "\n";
@@ -202,7 +456,7 @@ void RelationsModule::detectIndirectStudentConflicts() {
             }
             if (found) break;
         }
-        if (!found) cout << "âœ“ Student " << db->students[s] << ": No conflicts.\n";
+        if (!found) cout << "done Student " << db->students[s] << ": No conflicts.\n";
     }
 
     if (!any) cout << "\nNo indirect conflicts found.\n";
