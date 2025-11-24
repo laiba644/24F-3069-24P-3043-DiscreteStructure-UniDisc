@@ -40,13 +40,13 @@ UniversityDatabase::UniversityDatabase() {
     roomCount = 0;
     roomCap = 50;
     rooms = new string[roomCap];
-    // Faculty–Course Mapping
+    // Faculty Course Mapping
     facultyCourseCount = 0;
     facultyCourseCap = 200;
     facultyAssigned = new string[facultyCourseCap];
     courseAssigned = new string[facultyCourseCap];
 
-    // Course–Lab Mapping
+    // Course Lab Mapping
     labCourseCount = 0;
     labCourseCap = 200;
     labCourse = new string[labCourseCap];
@@ -167,11 +167,6 @@ void UniversityDatabase::loadCoursesFromFile(string f1, string f2) {
     }
     file.close();
 }
-
-
-
-
-
 
 //  FACULTY / LAB QUERIES
 
