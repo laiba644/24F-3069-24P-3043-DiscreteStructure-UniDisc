@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-// ---------- Constructor ----------
+
 ProofVerifier::ProofVerifier(CourseScheduling* s, InductionChecker* i, LogicEngine* l, UniversityDatabase* d) {
     sys = s;
     indu = i;
@@ -12,7 +12,7 @@ ProofVerifier::ProofVerifier(CourseScheduling* s, InductionChecker* i, LogicEngi
   
 }
 
-// ---------- Utility: Sort prerequisite chain ----------
+
 void ProofVerifier::sortChain(string arr[], int n) {
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
@@ -20,7 +20,7 @@ void ProofVerifier::sortChain(string arr[], int n) {
                 swap(arr[j], arr[j + 1]);
 }
 
-// ---------- Induction Proof ----------
+//  Induction Proof 
 void ProofVerifier::proveCourseEligibility(const string& course, string completed[], int cCount) {
     cout << "\n=== FORMAL INDUCTION PROOF OF ELIGIBILITY FOR " << course << " ===\n";
 
@@ -63,14 +63,14 @@ void ProofVerifier::proveCourseEligibility(const string& course, string complete
     cout << course << "\n";
 }
 
-// ---------- Verify Specific Rule ----------
+// Verify Specific Rule 
 void ProofVerifier::proveLogicRule(int index) {
     cout << "\n=== LOGIC RULE #" << index + 1 << " PROOF ===\n";
     logic->enableRule(index);
     logic->forwardChaining();
 }
 
-// ---------- Relational Consistency ----------
+//Relational Consistency
 void ProofVerifier::proveFacultyLabConsistency(const string& course) {
     cout << "\n=== RELATIONAL CONSISTENCY PROOF FOR " << course << " ===\n";
 
