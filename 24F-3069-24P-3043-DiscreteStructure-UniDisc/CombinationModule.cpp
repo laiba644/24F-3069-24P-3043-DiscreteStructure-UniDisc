@@ -24,7 +24,7 @@ long long CombinationModule::nCr(int n, int r) {
     return result;
 }
 
-// =================== GROUP GENERATION ===================
+// GROUP GENERATION 
 void CombinationModule::generateProjectGroups(int groupSize, UniversityDatabase& db) {
     int studentCount = db.studentCount;
     string* students = db.students;
@@ -68,7 +68,7 @@ void CombinationModule::generateProjectGroups(int groupSize, UniversityDatabase&
     cout << "\n" << count << " groups generated successfully.\n";
 }
 
-// =================== LAB SESSIONS ===================
+// LAB SESSIONS
 void CombinationModule::assignLabSessions(int studentsPerLab, UniversityDatabase& db) {
     int studentCount = db.studentCount;
     string* students = db.students;
@@ -95,7 +95,7 @@ void CombinationModule::assignLabSessions(int studentsPerLab, UniversityDatabase
     }
 }
 
-// =================== STATS ===================
+// STATS
 void CombinationModule::displayCombinationStats(UniversityDatabase& db) {
     int studentCount = db.studentCount;
     if (studentCount == 0) {
