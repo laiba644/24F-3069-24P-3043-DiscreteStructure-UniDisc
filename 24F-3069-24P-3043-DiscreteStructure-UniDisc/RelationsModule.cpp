@@ -58,7 +58,7 @@ RelationsModule::~RelationsModule() {
     delete[] courseConflict;
 }
 
-// ============ RELATION BUILDING FROM DB DATA ============
+// RELATION FROM DATABASE
 void RelationsModule::addStudentCoursePair(const string& studentName, const string& courseCode) {
     if (!db) return;
     int s = db->getStudentIndex(studentName);
@@ -98,13 +98,15 @@ void RelationsModule::addCourseConflictPair(const string& c1, const string& c2) 
 }
 
 bool RelationsModule::isCourseConflict(const string& c1, const string& c2) const {
-    if (!db) return false;
+    if (!db)
+	S return false;
     int i = db->getCourseIndex(c1);
     int j = db->getCourseIndex(c2);
-    if (i == -1 || j == -1) return false;
+    if (i == -1 || j == -1) 
+	return false;
     return courseConflict[i][j] == 1;
 }
-// ============ DISPLAY RELATIONS ============
+// ALL RELATIONS DISPLAY
 
 void RelationsModule::showStudentCourseRelation() {
     if (!db) return;
@@ -143,7 +145,7 @@ void RelationsModule::showStudentCourseRelation() {
     const int NAME_WIDTH = 12;
     const int COL_WIDTH = 7;
 
-    // ---- STEP 2: Print course header ----
+    //  STEP 2: Print course header 
     cout << "\n" << setw(NAME_WIDTH) << " ";
     for (int k = 0; k < activeCount; k++) {
         int colIndex = activeCols[k];
@@ -151,7 +153,7 @@ void RelationsModule::showStudentCourseRelation() {
     }
     cout << "\n";
 
-    // ---- STEP 3: Print student rows ----
+    //  STEP 3: Print student rows 
     for (int i = 0; i < db->studentCount; i++) {
 
         cout << setw(NAME_WIDTH) << db->students[i];
@@ -243,7 +245,8 @@ void RelationsModule::showFacultyCourseRelation() {
     }
 }
 void RelationsModule::showCourseRoomRelation() {
-    if (!db) return;
+    if (!db)
+	 return;
 
     cout << "\nCOURSE ? ROOM RELATION\n";
 
@@ -316,7 +319,8 @@ void RelationsModule::showCourseRoomRelation() {
 
 
 void RelationsModule::showCourseConflictRelation() {
-    if (!db) return;
+    if (!db)
+	 return;
 
     cout << "\nCOURSE CONFLICT GRAPH\n";
 
@@ -358,7 +362,7 @@ void RelationsModule::showCourseConflictRelation() {
     }
     cout << "\n";
 
-    // row-wise printing
+    // row wise printing
     for (int i = 0; i < db->courseCount; i++) {
 
         bool hasAnyConflict = false;
@@ -386,7 +390,7 @@ void RelationsModule::showCourseConflictRelation() {
     }
 }
 
-// ========= RELATION PROPERTY ANALYSIS ============
+//  RELATION PROPERTY ANALYSIS 
 bool RelationsModule::isReflexive(int** rel, int n) const {
     for (int i = 0;i < n;i++)
         if (rel[i][i] == 0) return false;
@@ -412,12 +416,14 @@ bool RelationsModule::isTransitive(int** rel, int n) const {
 bool RelationsModule::isAntisymmetric(int** rel, int n) const {
     for (int i = 0;i < n;i++)
         for (int j = 0;j < n;j++)
-            if (i != j && rel[i][j] == 1 && rel[j][i] == 1) return false;
+            if (i != j && rel[i][j] == 1 && rel[j][i] == 1)
+			 return false;
     return true;
 }
 
 void RelationsModule::analyzeCourseConflictRelation() {
-    if (!db) return;
+    if (!db) 
+	return;
     cout << "\nCOURSE CONFLICT PROPERTIES\n";
     bool refl = isReflexive(courseConflict, db->courseCount);
     bool symm = isSymmetric(courseConflict, db->courseCount);
@@ -432,9 +438,10 @@ void RelationsModule::analyzeCourseConflictRelation() {
     cout << "\nPartial Order? " << ((refl && anti && trans) ? "Yes" : "No") << "\n";
 }
 
-// ========= INDIRECT STUDENT CONFLICT DETECTION ============
+//  INDIRECT STUDENT CONFLICT DETECTION 
 void RelationsModule::detectIndirectStudentConflicts() {
-    if (!db) return;
+    if (!db)
+	 return;
     cout << "\nINDIRECT STUDENT CONFLICTS\n";
 
     bool any = false;
