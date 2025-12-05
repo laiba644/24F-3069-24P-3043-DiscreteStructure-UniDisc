@@ -99,7 +99,7 @@ void RelationsModule::addCourseConflictPair(const string& c1, const string& c2) 
 
 bool RelationsModule::isCourseConflict(const string& c1, const string& c2) const {
     if (!db)
-	S return false;
+	return false;
     int i = db->getCourseIndex(c1);
     int j = db->getCourseIndex(c2);
     if (i == -1 || j == -1) 
@@ -138,7 +138,7 @@ void RelationsModule::showStudentCourseRelation() {
     }
 
     if (activeCount == 0) {
-        cout << "(No student–course pairs added yet.)\n";
+        cout << "(No studentï¿½course pairs added yet.)\n";
         return;
     }
 
@@ -205,7 +205,7 @@ void RelationsModule::showFacultyCourseRelation() {
     }
 
     if (activeCount == 0) {
-        cout << "(No faculty–course pairs added yet.)\n";
+        cout << "(No facultyï¿½course pairs added yet.)\n";
         return;
     }
 
@@ -273,7 +273,7 @@ void RelationsModule::showCourseRoomRelation() {
     }
 
     if (activeRoomCount == 0) {
-        cout << "(No course–room assignments added yet.)\n";
+        cout << "(No courseï¿½room assignments added yet.)\n";
         return;
     }
 
